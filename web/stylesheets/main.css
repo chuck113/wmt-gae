@@ -1,0 +1,34 @@
+body {
+    font: 80% arial, helvetica, sans-serif;
+    margin: 0;
+}
+
+#liveInfo {
+    font: 110% arial, helvetica, sans-serif;
+    color: white
+}
+
+h1, h2 {
+    margin: 5;
+}
+
+#navigation {
+    float: right;
+    width: 300px;
+    margin: -3px;
+}
+
+#content {
+    margin-right: 300px;
+}
+
+#footer-old {
+    clear: both;
+}
+
+#footer {
+   position: absolute;
+   bottom: 0px; 
+   height:100px;   /* Height of the footer */
+   background:white;
+}

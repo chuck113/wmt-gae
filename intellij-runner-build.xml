@@ -1,0 +1,107 @@
+<project name="intellij-runner-gae-build" default="runserver">
+    <!-- assembles a intellij web project that can be ran as an app engine application -->
+    <property name="sdk.dir" location="C:/java/gae/appengine-java-sdk-1.2.5"/>
+
+    <property name="wmt.proj" value="${basedir}/../wheresmytube"/>
+    <property name="wmt.proj.src.dir" value="${wmt.proj}/src"/>
+    <property name="wmt.proj.lib.dir" value="${wmt.proj}/lib"/>
+
+    <property name="src.proj.exploded" value="${wmt.proj}/out/exploded/wmt"/>
+    <property name="src.proj.class.dir" value="${wmt.proj}/out/production/wheresmytube"/>
+    <property name="src.web.dir" value="${wmt.proj}/web"/>
+    <property name="lib.dir" value="${basedir}/lib"/>
+    <property name="target.web.dir" value="${basedir}/web"/>
+    <!--<property name="target.web.lib.dir" value="${basedir}/web-lib"/>-->
+    <property name="target.java.src.dir" value="${basedir}/wmt-java-src"/>
+    <property name="gae.web.src.dir" value="${basedir}/gae-web-src"/>
+
+    <import file="${sdk.dir}/config/user/ant-macros.xml"/>
+
+    <target name="clean">
+        <delete dir="${target.web.dir}"/>
+        <delete dir="${target.java.src.dir}"/>
+    </target>
+
+    <target name="init" depends="clean" description="Copies the App Engine JARs to the ${target.web.dir}.">
+        <mkdir dir="${target.web.dir}"/>
+        <mkdir dir="${target.java.src.dir}"/>
+    </target>
+
+    <path id="project.classpath">
+        <pathelement path="${target.web.dir}/WEB-INF/classes"/>
+        <fileset dir="${target.web.dir}/WEB-INF/lib">
+            <include name="**/*.jar"/>
+        </fileset>
+        <fileset dir="${sdk.dir}/lib">
+            <include name="shared/**/*.jar"/>
+        </fileset>
+    </path>
+
+
+    <target name="copyWebArtifacts" description="Copies compiled classes folder from the bulit dependent folder">
+        <copy todir="${target.web.dir}">
+            <fileset dir="${src.web.dir}">
+                <exclude name="WEB-INF/*"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="copyGaeWebSrc" description="Copies GAE specific web app files">
+        <copy todir="${target.web.dir}" overwrite="true">
+            <fileset dir="${gae.web.src.dir}"/>
+        </copy>
+    </target>
+
+    <target name="copyNonJavaClasspathFiles" description="Copies files for WEB-INF/classes">
+        <copy todir="${target.java.src.dir}">
+            <fileset dir="${wmt.proj.src.dir}">
+                <include name="recorded/*"/>
+                <include name="serailized-tube-data/*"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="buildIntellijWebFolder" depends="copyWebArtifacts,copyGaeWebSrc,copyNonJavaClasspathFiles">
+
+    </target>
+    <!--
+    <target name="compileWmtSrc" depends="copyjars"
+            description="Compiles Java source and copies other source files to the WAR.">
+        <mkdir dir="war/WEB-INF/classes"/>
+        <copy todir="war/WEB-INF/classes">
+            <fileset dir="src">
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+        <javac
+                srcdir="src"
+                destdir="war/WEB-INF/classes"
+                classpathref="project.classpath"
+                debug="on"/>
+    </target>-->
+
+    <target name="runserver" depends="buildIntellijWebFolder" description="Starts the development server.">
+        <dev_appserver war="${target.web.dir}"/>
+    </target>
+
+    <target name="update" depends="buildIntellijWebFolder" description="Uploads the application to App Engine.">
+        <appcfg action="update" war="${target.web.dir}"/>
+    </target>
+
+    <target name="rollback" depends="buildIntellijWebFolder"
+            description="Rolls back an interrupted application update.">
+        <appcfg action="rollback" war="${target.web.dir}"/>
+    </target>
+
+    <target name="request_logs" description="Downloads log data from App Engine for the application.">
+        <appcfg action="request_logs" war="${target.web.dir}">
+            <options>
+                <arg value="--num_days=5"/>
+            </options>
+            <args>
+                <arg value="logs.txt"/>
+            </args>
+        </appcfg>
+    </target>
+
+</project>

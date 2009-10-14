@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+		  http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+           version="2.5">
+
+        <!-- development key for http://wheresmytube.com/wmt 
+     ABQIAAAAANyf_1x1i_h8KT1GEqKZvxQERLWM6ojp2Y8BK8MX4gsjB-8HGBR4vkGAkzNY9oiUPObJzi2xRO-hnQ< -->
+  <context-param>
+    <param-name>GoogleMapsKey</param-name>
+      <!-- development key for http://http://wheresmytube.appspot.com -->
+    <param-value>ABQIAAAAANyf_1x1i_h8KT1GEqKZvxTQtXTe2o1-6qgv9oKyDRf_eXPmTBSvoLUw2zJfasSo2hhcB_zPn3y1aw</param-value>
+  </context-param>
+
+   <display-name>wmt servlet</display-name>
+   <!-- Application class name -->
+   <context-param>
+      <param-name>org.restlet.application</param-name>
+      <param-value>com.where.web.WmtRestApplication</param-value>
+   </context-param>
+
+    <context-param>
+      <!-- putting in "wmt" results in looking up wmt/wmt/rest, putting in "" results in just "rest", both are wrong -->
+      <param-name>com.web.appContext</param-name>
+      <param-value>""</param-value>
+   </context-param>
+    <context-param>
+      <param-name>com.web.imagesFolder</param-name>
+      <param-value>"images"</param-value>
+   </context-param>
+
+   <!-- Restlet adapter -->
+   <servlet>
+      <servlet-name>RestletServlet</servlet-name>
+      <servlet-class>
+         org.restlet.ext.servlet.ServerServlet
+      </servlet-class>
+   </servlet> 
+
+    <!-- test servlert -->
+    <servlet>
+      <servlet-name>TestServlet</servlet-name>
+      <servlet-class>
+         com.where.web.TestServlet
+      </servlet-class>
+   </servlet>
+
+    <!-- test servlet-->
+   <servlet-mapping>
+      <servlet-name>TestServlet</servlet-name>
+      <url-pattern>/test/*</url-pattern>
+   </servlet-mapping>
+   <servlet-mapping>
+      <servlet-name>TestServlet</servlet-name>
+      <url-pattern>/servlet/test/*</url-pattern>
+   </servlet-mapping>
+
+   <!-- Catch all requests -->
+   <servlet-mapping>
+      <servlet-name>RestletServlet</servlet-name>
+      <url-pattern>/rest/*</url-pattern>
+   </servlet-mapping>
+   <servlet-mapping>
+      <servlet-name>RestletServlet</servlet-name>
+      <url-pattern>/servlet/rest/*</url-pattern>
+   </servlet-mapping>
+</web-app>

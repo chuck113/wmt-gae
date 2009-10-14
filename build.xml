@@ -1,0 +1,123 @@
+<project name="gae-build" default="runserver">
+    <property name="sdk.dir" location="C:/java/gae/appengine-java-sdk-1.2.5"/>
+
+    <property name="wmt.proj" value="${basedir}/../wheresmytube"/>
+    <property name="wmt.proj.src.dir" value="${wmt.proj}/src"/>
+    <property name="wmt.proj.lib.dir" value="${wmt.proj}/lib"/>
+    <property name="src.proj.exploded" value="${wmt.proj}/out/exploded/wmt"/>
+    <property name="src.proj.class.dir" value="${wmt.proj}/out/production/wheresmytube"/>
+    <property name="src.web.dir" value="${wmt.proj}/web"/>
+    <property name="lib.dir" value="${basedir}/lib"/>
+    <property name="target.web.dir" value="${basedir}/web"/>
+
+    <import file="${sdk.dir}/config/user/ant-macros.xml"/>
+
+
+    <target name="init" description="Copies the App Engine JARs to the ${target.web.dir}.">
+        <delete dir="${target.web.dir}"/>
+        <mkdir dir="${target.web.dir}"/>
+    </target>
+
+    <path id="project.classpath">
+        <pathelement path="${target.web.dir}/WEB-INF/classes"/>
+        <fileset dir="${target.web.dir}/WEB-INF/lib">
+            <include name="**/*.jar"/>
+        </fileset>
+        <fileset dir="${sdk.dir}/lib">
+            <include name="shared/**/*.jar"/>
+        </fileset>
+    </path>
+
+
+    <target name="makeWmtJar" description="">
+        <jar file="${lib.dir}/wmt.jar" basedir="${src.proj.class.dir}/">
+            <include name="**/*.class"/>
+        </jar>
+    </target>
+
+    <target name="copyjars" description="Copies the App Engine JARs to the WAR." depends="init,makeWmtJar">
+        <copy todir="${target.web.dir}/WEB-INF/lib">
+            <fileset dir="${lib.dir}"/>
+        </copy>
+
+        <copy todir="${target.web.dir}/WEB-INF/lib">
+            <fileset dir="${wmt.proj.lib.dir}">
+                <include name="restlet-2_0*"/>
+                <include name="dom4j*"/>
+                <include name="commons*"/>
+                <include name="log4j*"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="copyWebArtifacts" description="Copies compoiled classes folder from the bulit dependent folder">
+        <copy todir="${target.web.dir}">
+            <fileset dir="${src.web.dir}">
+                <exclude name="WEB-INF/*"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="copyGaeWebSrc" description="Copies GAE specific web app files">
+        <copy todir="${target.web.dir}" overwrite="true">
+            <fileset dir="gae-web-src"/>
+        </copy>
+    </target>
+
+    <target name="copyClassPathDeps" description="Copies files for WEB-INF/classes">
+        <mkdir dir="${target.web.dir}/WEB-INF/classes"/>
+        <copy todir="${target.web.dir}/WEB-INF/classes">
+            <fileset dir="${wmt.proj.src.dir}">
+                <include name="recorded/*"/>
+                <include name="serailized-tube-data/*"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="buildWarFolder" depends="makeWmtJar,copyjars,copyWebArtifacts,copyGaeWebSrc,copyClassPathDeps">
+    </target>
+
+    <target name="buildIntellijWebFolder" depends="makeWmtJar,copyjars,copyWebArtifacts,copyGaeWebSrc,copyClassPathDeps">
+
+    </target>
+    <!--
+    <target name="compileWmtSrc" depends="copyjars"
+            description="Compiles Java source and copies other source files to the WAR.">
+        <mkdir dir="war/WEB-INF/classes"/>
+        <copy todir="war/WEB-INF/classes">
+            <fileset dir="src">
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+        <javac
+                srcdir="src"
+                destdir="war/WEB-INF/classes"
+                classpathref="project.classpath"
+                debug="on"/>
+    </target>-->
+
+    <target name="runserver" depends="buildWarFolder" description="Starts the development server.">
+        <dev_appserver war="${target.web.dir}"/>
+    </target>
+
+    <target name="update" depends="buildWarFolder" description="Uploads the application to App Engine.">
+        <appcfg action="update" war="${target.web.dir}"/>
+    </target>
+
+    <target name="rollback" depends="buildWarFolder"
+            description="Rolls back an interrupted application update.">
+        <appcfg action="rollback" war="${target.web.dir}"/>
+    </target>
+
+    <target name="request_logs" description="Downloads log data from App Engine for the application.">
+        <appcfg action="request_logs" war="${target.web.dir}">
+            <options>
+                <arg value="--num_days=5"/>
+            </options>
+            <args>
+                <arg value="logs.txt"/>
+            </args>
+        </appcfg>
+    </target>
+
+</project>
