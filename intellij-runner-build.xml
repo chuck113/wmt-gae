@@ -64,7 +64,7 @@
     <target name="copyNonJavaClasspathFiles" description="Copies files for WEB-INF/classes">
         <copy todir="${target.java.src.dir}">
             <fileset dir="${wmt.proj.src.dir}">
-                <include name="recorded/*"/>
+                <include name="localresults/*"/>
                 <include name="serailized-tube-data/*"/>
             </fileset>
         </copy>

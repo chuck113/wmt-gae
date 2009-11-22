@@ -1,4 +1,4 @@
-<datastore-indexes>
+<datastore-indexes autoGenerate="true">
     <datastore-index kind="LineIterationResult" ancestor="false" source="manual">
         <property name="line" direction="asc"/>
         <property name="validityTime" direction="desc"/>
