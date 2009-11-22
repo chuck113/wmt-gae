@@ -24,6 +24,7 @@ public class DatastoreBranchIteratorSynchronizer implements BranchIteratorSynchr
     private final LineIterationResultDao lineDao = new LineIterationResultDao();
     private final BranchIterator branchIterator;
 
+    //private static long VALIDITY_PERIOD = 3000;
     private static long VALIDITY_PERIOD = WmtProperties.DATA_VALIDITY_PERIOD_MS;
 
     public DatastoreBranchIteratorSynchronizer(BranchIterator branchIterator) {
@@ -75,9 +76,11 @@ public class DatastoreBranchIteratorSynchronizer implements BranchIteratorSynchr
             if (lineDao.casUpdate(result.getId(), 0, randomLong())) {
                 LOG.warn("DatastoreBranchIteratorSynchronizer.getBranch STARTING WORK FOR " + branch);
                 String resultJson = ResultTransformer.toJson(branchIterator.run(branch));
+                //sleep(2000);
                 //String resultJson = "result recorded at "+new Date().getTime();
                 LineIterationResult newResult = new LineIterationResult(branch, resultJson, new Date());
                 String newId = lineDao.create(newResult);
+                lineDao.cleanUp(branch, 5);
                 //LOG.warn("DatastoreBranchIteratorSynchronizer.getBranch updated new result with id "+newId);
 
                 return resultJson;
