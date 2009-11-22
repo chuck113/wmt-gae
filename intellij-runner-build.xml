@@ -1,6 +1,6 @@
-<project name="intellij-runner-gae-build" default="runserver">
+<project name="intellij-runner-build" default="runserver">
     <!-- assembles a intellij web project that can be ran as an app engine application -->
-    <property name="sdk.dir" location="C:/java/gae/appengine-java-sdk-1.2.5"/>
+    <property name="sdk.dir" location="C:/java/gae/appengine-java-sdk-1.2.6"/>
 
     <property name="wmt.proj" value="${basedir}/../wheresmytube"/>
     <property name="wmt.proj.src.dir" value="${wmt.proj}/src"/>
@@ -14,13 +14,24 @@
     <!--<property name="target.web.lib.dir" value="${basedir}/web-lib"/>-->
     <property name="target.java.src.dir" value="${basedir}/wmt-java-src"/>
     <property name="gae.web.src.dir" value="${basedir}/gae-web-src"/>
+    <property name="gae.out.dir" value="${basedir}/out"/>
+    <property name="gae.out.webapp" value="${basedir}/out/exploded/wheresmytube-gaeWeb"/>
 
     <import file="${sdk.dir}/config/user/ant-macros.xml"/>
+
+    <target name="cleanExploded">
+        <delete dir="${gae.out.dir}"/>
+    </target>
 
     <target name="clean">
         <delete dir="${target.web.dir}"/>
         <delete dir="${target.java.src.dir}"/>
     </target>
+
+    <target name="deleteDataStore">
+         <delete dir="${gae.out.webapp}/WEB-INF/appengine-generated"/>
+    </target>
+
 
     <target name="init" depends="clean" description="Copies the App Engine JARs to the ${target.web.dir}.">
         <mkdir dir="${target.web.dir}"/>
@@ -40,9 +51,7 @@
 
     <target name="copyWebArtifacts" description="Copies compiled classes folder from the bulit dependent folder">
         <copy todir="${target.web.dir}">
-            <fileset dir="${src.web.dir}">
-                <exclude name="WEB-INF/*"/>
-            </fileset>
+            <fileset dir="${src.web.dir}"/>
         </copy>
     </target>
 
@@ -96,7 +105,8 @@
     <target name="request_logs" description="Downloads log data from App Engine for the application.">
         <appcfg action="request_logs" war="${target.web.dir}">
             <options>
-                <arg value="--num_days=5"/>
+                <arg value="--num_days=1"/>
+                <arg value="--severity=0"/>
             </options>
             <args>
                 <arg value="logs.txt"/>
