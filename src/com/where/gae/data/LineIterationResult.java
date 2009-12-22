@@ -4,6 +4,7 @@ import com.google.appengine.api.datastore.Text;
 
 import javax.jdo.annotations.*;
 import java.util.Date;
+import java.io.Serializable;
 
 /**
  * @author Charles Kubicek
@@ -12,7 +13,7 @@ import java.util.Date;
 @Version(
     strategy = VersionStrategy.VERSION_NUMBER,
     extensions = {@Extension(vendorName="datanucleus", key="field-name", value="versionField")})
-public class LineIterationResult {
+public class LineIterationResult implements Serializable {
 
     @PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)

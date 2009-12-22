@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+		  http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+           version="2.5">
+
+  <context-param>
+    <param-name>GoogleMapsKey</param-name>
+      <!-- development key for http://wheresmytube.com -->
+      <!-- development key for http://www.wheresmytube.com -->
+      <param-value>ABQIAAAAANyf_1x1i_h8KT1GEqKZvxQOY00Tn5-R_voQhXk7sS84qtWqXBQQNZtoyxsSXaRFj9M6lbqv7gw51Q</param-value>
+  </context-param>
+
+    <context-param>
+    <param-name>GoogleMapsKeyBeta</param-name>
+      <!-- development key for http://wheresmytube-beta.appspot.com -->
+    <param-value>ABQIAAAAANyf_1x1i_h8KT1GEqKZvxSueid8vftYV5fwyV-HlOvwBQ0F6xQgEQoTMCaxyW4tZAHMJ6Ya25F3bg</param-value>
+    </context-param>
+
+    <display-name>wmt servlet</display-name>
+   <!-- Application class name -->
+   <context-param>
+      <param-name>org.restlet.application</param-name>
+      <param-value>com.where.web.GaeWmtRestApplication</param-value>
+   </context-param>
+
+    <context-param>
+      <!-- putting in "wmt" results in looking up wmt/wmt/rest, putting in "" results in just "rest", both are wrong -->
+      <param-name>com.web.appContext</param-name>
+      <param-value>""</param-value>
+   </context-param>
+    <context-param>
+      <param-name>com.web.imagesFolder</param-name>
+      <param-value>"images"</param-value>
+   </context-param>
+
+   <!-- Restlet adapter -->
+   <servlet>
+      <servlet-name>RestletServlet</servlet-name>
+      <servlet-class>
+         org.restlet.ext.servlet.ServerServlet
+      </servlet-class>
+   </servlet> 
+
+   <!-- Catch all requests -->
+   <servlet-mapping>
+      <servlet-name>RestletServlet</servlet-name>
+      <url-pattern>/rest/*</url-pattern>
+   </servlet-mapping>
+   <servlet-mapping>
+      <servlet-name>RestletServlet</servlet-name>
+      <url-pattern>/servlet/rest/*</url-pattern>
+   </servlet-mapping>
+</web-app>

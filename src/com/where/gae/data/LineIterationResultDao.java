@@ -41,7 +41,37 @@ public class LineIterationResultDao {
         }finally{
             pm.close();
         }
+    }
 
+    public void dropAll() {
+        PersistenceManager pm = PMF.get().getPersistenceManager();
+        try{
+            Query query = pm.newQuery(LineIterationResult.class);
+            //pm.currentTransaction().begin();
+            List<LineIterationResult> result = (List<LineIterationResult>) query.execute();
+            pm.deletePersistentAll(Lists.newArrayList(result));
+            //pm.currentTransaction().commit();
+        }catch (Exception e){
+            //pm.currentTransaction().rollback();               
+            LOG.warn("while dropping all: "+e.getMessage(), e);
+        }finally{
+            pm.close();
+        }
+    }
+
+    //TODO
+    private class PersistenceFacade{
+        private final PersistenceManager pm = PMF.get().getPersistenceManager();
+
+        public PersistenceFacade(){
+            pm.currentTransaction().begin();
+        }
+
+        public String save(LineIterationResult result){
+            //Need to test this, unlikely
+            pm.makePersistent(result);
+            return result.getId();
+        }
     }
 
     public String create(LineIterationResult result) {
@@ -51,8 +81,6 @@ public class LineIterationResultDao {
             pm.currentTransaction().begin();
             pm.makePersistent(result);
             pm.currentTransaction().commit();
-            //LOG.warn("LineIterationResultDao.create committed "+result);
-
             return result.getId();
         } finally {
             if (pm.currentTransaction().isActive()) {
@@ -122,42 +150,31 @@ public class LineIterationResultDao {
         UNCHECKED, SUCCESS, FAILED
     }
 
+    /**
+     * 'Compare-and-set', will force an exception if the previousExpected value is different
+     * to the value actually in the datastore
+     *  
+     * @param entryKey
+     * @param previousExpected
+     * @param newValue
+     * @return
+     */
     public boolean casUpdate(String entryKey, long previousExpected, long newValue) {
+        LOG.warn("LineIterationResultDao.casUpdate key is "+entryKey);
+
         CasTestState casState = CasTestState.UNCHECKED;
         PersistenceManager pm = pm();
         Transaction tx = pm.currentTransaction();
         try {
             tx.begin();
-            LineIterationResult existing = pm.getObjectById(LineIterationResult.class, entryKey);//getLatestLineResult(line, pm);
-            //LOG.warn( "LineIterationResultDao.casUpdate "+System.currentTimeMillis()+" for id "+existing.getId()+" cas is "+existing.getCasValue()+", version is "+existing.getVersionField());
+            LineIterationResult existing = pm.getObjectById(LineIterationResult.class, entryKey);
             if (existing.getCasValue() != previousExpected) {
-                //LOG.warn( "LineIterationResultDao.casUpdate "+System.currentTimeMillis()+" for id "+existing.getId()+" current result is not as expected, NOT committing, cas is "+existing.getCasValue());
                 casState = CasTestState.FAILED;
             } else {
-//                long versionField = existing.getVersionField();
-//                LOG.warn( "LineIterationResultDao.casUpdate "+System.currentTimeMillis()+" for id "+existing.getId()+" current result is "+previousExpected+" as expected, committing");
-//                LOG.warn( "LineIterationResultDao.casUpdate begining sleep at "+System.currentTimeMillis());
-////                synchronized (this){
-////                    try{this.wait(5000);}catch(Exception e){}
-////                }
-//                try {
-//                    Thread.sleep(5000);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-//                }
-//                LOG.warn( "LineIterationResultDao.casUpdate ended sleep at "+System.currentTimeMillis());
-
                 existing.setCasValue(newValue);
                 pm.makePersistent(existing);
                 tx.commit();
-                //LOG.warn("LineIterationResultDao.casUpdate version before was "+versionField+", version now is "+existing.getVersionField());
-                //if(existing.getVersionField() != versionField){
-                //    LOG.warn( "LineIterationResultDao.casUpdate "+System.currentTimeMillis()+" for id "+existing.getId()+" comitted cas but got incorrect version field, returning as failed");
-                //    casState = CasTestState.FAILED;
-                //} else {
-                //LOG.warn( "LineIterationResultDao.casUpdate "+System.currentTimeMillis()+" for id "+existing.getId()+" committed result "+newValue);
                 casState = CasTestState.SUCCESS;
-                //}
             }
             // this has never been caught but we'd like it to be as this is the perfered method
             // method of isolation, must be a bug, or GAE throws concurrent modification exceptions

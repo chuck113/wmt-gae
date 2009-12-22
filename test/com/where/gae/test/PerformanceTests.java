@@ -38,8 +38,8 @@ public class PerformanceTests extends TestCase {
         final String localHost = "localhost:8080";
         final URL url = new URL("http://"+appHost+"/rest/branches/victoria");
 
-        final int threads = 5;
-        final int loops = 200;
+        final int threads = 25;
+        final int loops = 20;
         final long maxMillisBetweenRequests = 300;
         final long exactMillisBetweenRequests = 200;
         final int[] doneCount = new int[]{0};
