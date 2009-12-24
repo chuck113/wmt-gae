@@ -3,15 +3,12 @@
     <property name="sdk.dir" location="C:/java/gae/appengine-java-sdk-1.2.6"/>
 
     <property name="wmt.proj" value="${basedir}/../wheresmytube"/>
-    <property name="wmt.proj.src.dir" value="${wmt.proj}/src"/>
+    <property name="wmt.proj.resource.dir" value="${wmt.proj}/src/resources"/>
     <property name="wmt.proj.lib.dir" value="${wmt.proj}/lib"/>
 
-    <property name="src.proj.exploded" value="${wmt.proj}/out/exploded/wmt"/>
-    <property name="src.proj.class.dir" value="${wmt.proj}/out/production/wheresmytube"/>
     <property name="src.web.dir" value="${wmt.proj}/web"/>
     <property name="lib.dir" value="${basedir}/lib"/>
     <property name="target.web.dir" value="${basedir}/web"/>
-    <!--<property name="target.web.lib.dir" value="${basedir}/web-lib"/>-->
     <property name="target.java.src.dir" value="${basedir}/wmt-java-src"/>
     <property name="gae.web.src.dir" value="${basedir}/gae-web-src"/>
     <property name="gae.out.dir" value="${basedir}/out"/>
@@ -32,7 +29,6 @@
          <delete dir="${gae.out.webapp}/WEB-INF/appengine-generated"/>
     </target>
 
-
     <target name="init" depends="clean" description="Copies the App Engine JARs to the ${target.web.dir}.">
         <mkdir dir="${target.web.dir}"/>
         <mkdir dir="${target.java.src.dir}"/>
@@ -48,7 +44,6 @@
         </fileset>
     </path>
 
-
     <target name="copyWebArtifacts" description="Copies compiled classes folder from the bulit dependent folder">
         <copy todir="${target.web.dir}">
             <fileset dir="${src.web.dir}"/>
@@ -63,7 +58,7 @@
 
     <target name="copyNonJavaClasspathFiles" description="Copies files for WEB-INF/classes">
         <copy todir="${target.java.src.dir}">
-            <fileset dir="${wmt.proj.src.dir}">
+            <fileset dir="${wmt.proj.resource.dir}">
                 <include name="localresults/*"/>
                 <include name="serailized-tube-data/*"/>
             </fileset>

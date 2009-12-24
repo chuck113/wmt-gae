@@ -1,4 +1,6 @@
 /out
-*.iml
+/online-logs
+/web
+/wmt-java-src
 *.ipr
 *.iws

@@ -1,7 +1,8 @@
 <project name="gae-build" default="runserver">
-    <property name="sdk.dir" location="C:/java/gae/appengine-java-sdk-1.2.5"/>
+    <property name="sdk.dir" location="C:/java/gae/appengine-java-sdk-1.2.6"/>
 
-    <property name="wmt.proj" value="${basedir}/../wheresmytube"/>
+    <!--<property name="wmt.proj" value="${basedir}/../wheresmytube"/> -->
+    <property name="wmt.proj" value="${basedir}/../wheresmytube-clone/wmt"/>
     <property name="wmt.proj.src.dir" value="${wmt.proj}/src"/>
     <property name="wmt.proj.lib.dir" value="${wmt.proj}/lib"/>
     <property name="src.proj.exploded" value="${wmt.proj}/out/exploded/wmt"/>
