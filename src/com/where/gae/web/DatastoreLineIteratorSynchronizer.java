@@ -9,6 +9,7 @@ import com.where.domain.alg.LineIterator;
 
 import java.util.Date;
 import java.util.Set;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.apache.commons.lang.StringUtils;
@@ -24,7 +25,7 @@ public class DatastoreLineIteratorSynchronizer implements LineIteratorSynchroniz
 
     public static final long VALIDITY_PERIOD = WmtProperties.DATA_VALIDITY_PERIOD_MS;
     public static final String INITIAL_ENTRY = WmtProperties.INITIAL_POINTS_ENTRY;
-    private final Set<String> validLines = WmtProperties.LINES_TO_ITERATE;
+    private final List<String> validLines = WmtProperties.LINES_TO_ITERATE;
     static final String DROP_ALL = "dropAll";
 
     public DatastoreLineIteratorSynchronizer(LineIterator lineIterator) {
@@ -48,6 +49,7 @@ public class DatastoreLineIteratorSynchronizer implements LineIteratorSynchroniz
     boolean isResultTimeValid(LineIterationResult result) {
         return (result.getValidityTime().getTime() + VALIDITY_PERIOD) >= new Date().getTime();
     }
+
 
     long randomLong() {
         return new Double(Math.random() * (10000000.0d)).longValue();

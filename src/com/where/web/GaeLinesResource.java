@@ -34,8 +34,8 @@ public class GaeLinesResource extends AbstractLinesResource {
         }
     }
 
-    LineIteratorSynchronizer getLineIteratorSynchronizer(ArrivalBoardScraper scraper, DaoFactory daoFactory) {
-        return new MemcacheLineIteratorSynchronizer(new LineIteratorImpl(getDaoFactory(), scraper));
+    LineIteratorSynchronizer getLineIteratorSynchronizer(LineIteratorImpl lineIterator) {
+        return new MemcacheLineIteratorSynchronizer(lineIterator);
     }
 
     DaoFactory getDaoFactory() {

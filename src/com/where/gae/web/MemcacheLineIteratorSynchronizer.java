@@ -4,12 +4,14 @@ import com.where.domain.alg.LineIterator;
 import com.where.gae.data.LineIterationResult;
 import com.where.gae.data.LineIterationState;
 import com.where.web.WmtProperties;
+import com.where.web.JsonTransformer;
 import com.google.appengine.api.memcache.stdimpl.GCacheFactory;
 
 import org.apache.log4j.Logger;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Date;
 import javax.cache.Cache;
 import javax.cache.CacheException;
 import javax.cache.CacheFactory;
@@ -34,6 +36,15 @@ public class MemcacheLineIteratorSynchronizer extends DatastoreLineIteratorSynch
         }
     }
 
+        /**
+     * If a parse is in progress but the valididty time was X minutes ago there is something wrong, i.e the request
+     * that started the line parse failed in some way and the is
+     */
+    boolean isResultTimeExpiredForLongerThanShouldBe(LineIterationState state) {
+        return state.isReItrationInProgress() &&
+             (state.getResult().getValidityTime().getTime() + (VALIDITY_PERIOD * 3)) >= new Date().getTime();
+    }
+
     /**
      * As memcahce can be emptied at anytime grab the last result from the datastore
      * if the value is null
@@ -55,6 +66,7 @@ public class MemcacheLineIteratorSynchronizer extends DatastoreLineIteratorSynch
         }
     }
 
+
     @Override
     public String getLine(final String line) {
         LOG.warn("line is "+line);
@@ -66,7 +78,7 @@ public class MemcacheLineIteratorSynchronizer extends DatastoreLineIteratorSynch
             return "{  \"dropAll\" : \"OK\"}";
         }
         if(!validateLine(line)){
-           return "{  \"error\" : \"line '"+line+"' was invalid\"}";
+            return JsonTransformer.toJsonError("line "+line+" was invalid");
         }
         LineIterationState state = safeGet(line);
         LOG.warn("MemcacheLineIteratorSynchronizer.getLine.() isResultTimeValid(state.getResult()) is "+isResultTimeValid(state.getResult()));

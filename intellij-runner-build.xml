@@ -1,6 +1,6 @@
 <project name="intellij-runner-build" default="runserver">
     <!-- assembles a intellij web project that can be ran as an app engine application -->
-    <property name="sdk.dir" location="C:/java/gae/appengine-java-sdk-1.2.6"/>
+    <property name="sdk.dir" location="C:/java/gae/appengine-java-sdk-LATEST"/>
 
     <property name="wmt.proj" value="${basedir}/../wheresmytube"/>
     <property name="wmt.proj.resource.dir" value="${wmt.proj}/src/resources"/>
