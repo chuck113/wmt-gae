@@ -1,0 +1,4 @@
+WMT deploys to 3 servers so each needs to be deployed individually by setting the application name web/WEB-INF/appengine-web.xml
+Increment version number
+Also just copy data from wmt.properties in the gae project into the wmt project to make sure it work
+Delete all data from datastore upon deployment

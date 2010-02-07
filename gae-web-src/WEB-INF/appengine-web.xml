@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appengine-web-app xmlns="http://appengine.google.com/ns/1.0">
 	<!--<application>wheresmytube</application>-->
-    <application>wheresmytube-beta</application>
+    <!--pplication>wheresmytube-beta</application>-->
     <!--<application>ckconcurrent</application>-->
-	<version>1</version>
+
+    <!-- for deployment deploy each of these REPLACING UNDERSCORES WITH DASHES -->
+    <application>wheresmytube</application>
+    <!--<application>wheresmytube__1</application>-->
+    <!--<application>wheresmytube__2</application>-->
+
+    <!-- version is version on then the date -->
+	<version>1--07-02-10</version>
 	
 	<!-- Configure java.util.logging -->
 	<system-properties>
